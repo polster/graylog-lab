@@ -1,0 +1,15 @@
+---
+
+- hosts: all
+  become: True
+#  roles:
+    # TODO: Disabling local firewalls, needs further hardening
+#    - role: "local-firewall"
+#      firewall_enabled: false
+#    - role: "polster.ansible-java"
+
+- hosts: graylog-server
+  become: True
+  roles:
+    - role: "graylog-ansible-role"
+      tags: graylog

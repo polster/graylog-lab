@@ -1,0 +1,9 @@
+# defines the IP and port to be used by the Vagrant Ansible provisioner for each host
+graylog-server01-dev ansible_ssh_host=192.168.8.56 ansible_ssh_port=22
+graylog-client01-dev ansible_ssh_host=192.168.8.57 ansible_ssh_port=22
+
+[graylog-server]
+graylog-server01-dev
+
+[all:vars]
+env=dev

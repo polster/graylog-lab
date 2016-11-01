@@ -1,0 +1,61 @@
+################
+# GrayLog config
+################
+
+graylog_is_master:          'True'
+graylog_password_secret:    '2jueVqZpwLLjaWxV' # generate with: pwgen -s 96 1
+graylog_root_password_sha2: '00810cf8b94d6fcb9c5de484d3bec4187620b3e2876e59aab90d852fe0f18fb6' # generate with: echo -n changeit | shasum -a 256
+
+# Elasticsearch message retention
+graylog_elasticsearch_max_docs_per_index:    20000000
+graylog_elasticsearch_max_number_of_indices: 20
+graylog_elasticsearch_shards:                4
+graylog_elasticsearch_replicas:              0
+
+graylog_rest_listen_uri:  'http://0.0.0.0:9000/api/'
+graylog_web_listen_uri:   'http://0.0.0.0:9000/'
+graylog_web_endpoint_uri: 'http://127.0.0.1:9000/api/'
+
+######################
+# Elasticsearch config
+######################
+
+es_instance_name: 'graylog'
+es_scripts: False
+es_templates: False
+es_version_lock: False
+es_heap_size: 1g
+
+es_config: {
+  node.name: "graylog",
+  cluster.name: "graylog",
+  discovery.zen.ping.unicast.hosts: "localhost:9301",
+  http.port: 9200,
+  transport.tcp.port: 9300,
+  network.host: 0.0.0.0,
+  node.data: true,
+  node.master: true,
+  bootstrap.mlockall: false,
+  discovery.zen.ping.multicast.enabled: false
+}
+
+#########################
+# nginx Web Server config
+#########################
+
+nginx_sites:
+  graylog:
+    - listen 80
+    - server_name graylog
+    - location / {
+      proxy_pass http://localhost:9000/;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_pass_request_headers on;
+      proxy_connect_timeout 150;
+      proxy_send_timeout 100;
+      proxy_read_timeout 100;
+      proxy_buffers 4 32k;
+      client_max_body_size 8m;
+      client_body_buffer_size 128k; }
